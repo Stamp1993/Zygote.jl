@@ -21,7 +21,7 @@ end
   va = varargs(meta.method, length(T.parameters))
   i = try IR(meta)
   catch e
-    rethrow(CompileError((meta.code, meta.method, i),e))
+    rethrow(CompileError((meta.code, meta.method),e))
   end
   #println(meta.code)
   #println(meta.method)
