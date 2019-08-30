@@ -19,7 +19,10 @@ end
   ignore(T) && return :nothing
   meta = getmeta(T)
   va = varargs(meta.method, length(T.parameters))
-  i = IR(meta)
+  i = try IR(meta)
+  catch e
+    rethrow(CompileError((meta.code, meta.method, i),e))
+  end
   #println(meta.code)
   #println(meta.method)
   #@show(va)
