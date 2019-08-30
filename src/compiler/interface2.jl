@@ -17,9 +17,15 @@ end
 
 @generated function (j::Pullback{T})(Δ) where T
   ignore(T) && return :nothing
+  meta = getmeta(T)
+  va = varargs(meta.method, length(T.parameters))
+  i = IR(meta)
+  #println(meta.code)
+  #println(meta.method)
+  #@show(va)
   g = try _lookup_grad(T)
   catch e
-    rethrow(CompileError(T,e))
+    rethrow(CompileError((meta.code, meta.method, i),e))
   end
   if g == nothing
     Δ == Nothing && return :nothing
