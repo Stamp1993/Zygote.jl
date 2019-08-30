@@ -39,6 +39,7 @@ function forward(f, args...)
 end
 
 sensitivity(y::Number) = one(y)
+sensitivity(y::Vector) = _vec(y)
 sensitivity(y::Complex) = error("Output is complex, so the gradient is not defined.")
 sensitivity(y) = error("Output should be scalar; gradients are not defined for output $(repr(y))")
 
@@ -126,4 +127,21 @@ end
 
 macro code_adjoint(ex)
   :(Adjoint($(code_irm(ex)), varargs = varargs($(esc(:($InteractiveUtils.@which $ex))), length(($(esc.(ex.args)...),)))))
+end
+
+function _vec(f)
+  println("Privet")
+  println("---------------------------------")
+  println("F: ", f)
+  N = length(f)
+  res = zeros(N)
+  res[1] = f[2] - f[1]
+  res[end] = f[end] - f[end-1]
+  for i=2:N-1
+    #Central differences
+    res[i] = (f[i+1] - f[i-1]) / 2
+  end
+  println("Result: ", res)
+  println("---------------------------------")
+  return res
 end
